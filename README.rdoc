@@ -1,0 +1,31 @@
+= Jetstream
+
+Jetstream is a simple library for converting data streams into IOish objects.
+
+The motivating example is feeding REXML's PullParser a data source being read
+from a socket. Rather than having to read everything into a temporary file or
+into memory, we'd like to start processing it as it comes down the pipe.
+
+    require 'jetstream'
+
+    xml_data = FrameIO.new do |source|
+      some_data_source.read_chunk do |chunk|
+        source.add chunk
+      end
+    end
+
+    parser = REXML::PullParser.new(xml)
+
+    while parser.has_next?
+      token = parser.pull
+      
+      # do your thing
+    end
+
+Right now, I'm using the standard +generator+ library for doing this, but it
+might need to be switched to a thread based solution if speed is an issue.  I
+honestly don't know if +callcc+ is as slow as it is/was made out to be.
+
+= Copyright
+
+Copyright (c) 2008 Louis J. Scoras, released under the MIT license
